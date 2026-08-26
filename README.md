@@ -39,10 +39,22 @@ data_pipeline/01_gee_export.py            AOI → 6-band GeoTIFF (Earth Engine)
 
 ## Step-by-step
 
+### 0. Environment Setup
+It is recommended to use a Python virtual environment to install dependencies for the entire pipeline at once:
+```bash
+python -m venv .venv
+
+# On Windows:
+.venv\Scripts\activate
+# On macOS/Linux:
+# source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
 ### 1. Export the AOI imagery
 ```bash
 cd data_pipeline
-pip install -r requirements.txt
 earthengine authenticate
 # edit AOI_BBOX in 01_gee_export.py first
 python 01_gee_export.py
@@ -66,7 +78,6 @@ python 03_tile_deploy_grid.py
 ### 4. Train
 ```bash
 cd ../training
-pip install -r requirements.txt
 python 04_train_hybrid_model.py --data ../data_pipeline/labeled_patches.npz
 ```
 This holds out a real geographic cluster of your labeled points for testing — not a random shuffle. **How many labeled points you need**: the more the better, but treat anything under ~50-100 points as directional rather than a trustworthy accuracy estimate — the script will warn you if your dataset is thin relative to the number of spatial clusters requested.
@@ -79,7 +90,6 @@ python 05_run_inference.py --grid ../data_pipeline/deploy_grid.npz --model_dir s
 ### 6. Serve it
 ```bash
 cd ../backend
-pip install -r requirements.txt
 uvicorn app:app --reload --port 8000
 ```
 
