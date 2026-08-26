@@ -1,0 +1,16 @@
+# Combined dependencies for the whole pipeline.
+# You can also install per-stage: data_pipeline/requirements.txt,
+# training/requirements.txt, backend/requirements.txt separately.
+
+earthengine-api
+rasterio
+numpy
+
+torch
+torchvision
+scikit-learn
+xgboost
+joblib
+
+fastapi
+uvicorn
