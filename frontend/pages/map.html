@@ -1,0 +1,81 @@
+<!-- ── Map Page ─────────────────────────────────────────────── -->
+
+<div class="map-page">
+  <!-- Sidebar -->
+  <aside class="map-sidebar">
+    <div>
+      <h2>Suitability Map</h2>
+      <p class="sidebar-subtitle">Anantapur Pilot AOI — Predicted groundwater well-siting suitability</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="map-stats-row">
+      <div class="mini-stat">
+        <div class="ms-value" id="ms-total">—</div>
+        <div class="ms-label">Grid Cells</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-value" id="ms-mean">—</div>
+        <div class="ms-label">Mean Suitability</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-value" id="ms-high">—</div>
+        <div class="ms-label">High (>60%)</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-value" id="ms-low">—</div>
+        <div class="ms-label">Low (<20%)</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div>
+      <label style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Suitability Legend</label>
+      <div class="legend-bar"></div>
+      <div class="legend-labels">
+        <span>Low (unsuitable)</span>
+        <span>High (suitable)</span>
+      </div>
+    </div>
+
+    <!-- Distribution Chart -->
+    <div class="chart-container">
+      <h4>Probability Distribution</h4>
+      <div style="position: relative; height: 180px; width: 100%;">
+        <canvas id="distChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Label Balance Chart -->
+    <div class="chart-container">
+      <h4>Training Data Balance</h4>
+      <div style="position: relative; height: 160px; width: 100%;">
+        <canvas id="labelChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Opacity Slider -->
+    <div class="slider-group">
+      <label for="opacitySlider">Heatmap Opacity</label>
+      <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.75">
+    </div>
+
+    <!-- Toggle training points -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <input type="checkbox" id="togglePoints" style="accent-color: var(--accent-cyan); cursor: pointer;">
+      <label for="togglePoints" style="font-size: 13px; color: var(--text-secondary); cursor: pointer;">
+        Show Training Well Locations
+      </label>
+    </div>
+
+    <!-- Status -->
+    <div id="map-status" style="font-size: 12px; color: var(--text-muted); margin-top: auto;">
+      Loading suitability data…
+    </div>
+  </aside>
+
+  <!-- Map Container -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+</div>

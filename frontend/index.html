@@ -1,161 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anantapur Well-Siting — Suitability Map</title>
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<!-- Geocoder Plugin CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project WISE — Water Infrastructure Siting for Employment</title>
+  <meta name="description" content="A machine learning pipeline for optimal groundwater well-siting in Anantapur, India. Uses ResNet18 + XGBoost hybrid architecture with 6-band satellite imagery.">
 
-<style>
-  :root {
-    --parched: #C9A468;
-    --well-blue: #1B6E8C;
-    --ink: #1F2421;
-    --paper: #FAF7F0;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
-  #map { width: 100%; height: 100%; }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  #panel {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: var(--paper);
-    border-radius: 10px;
-    padding: 16px 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-    max-width: 260px;
-    z-index: 1000;
-  }
-  #panel h1 { font-size: 15px; margin: 0 0 4px 0; letter-spacing: 0.01em; }
-  #panel p { font-size: 12.5px; margin: 0 0 12px 0; color: #55524a; line-height: 1.4; }
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Geocoder Plugin CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
-  #legend { display: flex; align-items: center; gap: 8px; }
-  #legend .bar {
-    width: 120px; height: 10px; border-radius: 5px;
-    background: linear-gradient(90deg, var(--parched), var(--well-blue));
-  }
-  .labels { display: flex; justify-content: space-between; width: 120px; font-size: 10.5px; color: #77746a; margin-top: 3px; }
-
-  /* New Slider Styles */
-  .slider-container { margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px; }
-  .slider-container label { font-size: 12px; font-weight: 600; display: block; margin-bottom: 5px; }
-  input[type=range] { width: 100%; cursor: pointer; }
-
-  #status {
-    position: absolute;
-    bottom: 16px;
-    left: 16px;
-    background: var(--paper);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: #55524a;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-    z-index: 1000;
-  }
-</style>
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div id="panel">
-  <h1>Well-Siting Suitability</h1>
-  <p>Predicted groundwater suitability across the pilot AOI. Darker blue = higher probability.</p>
-  
-  <div id="legend"><div class="bar"></div></div>
-  <div class="labels"><span>Low</span><span>High</span></div>
+  <!-- ── Navigation ──────────────────────────────────────────── -->
+  <nav class="nav" id="main-nav">
+    <a href="#about" class="nav-brand">
+      <span class="dot"></span>
+      Project WISE
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="nav-links">
+      <a href="#about" data-page="about">About</a>
+      <a href="#pipeline" data-page="pipeline">Pipeline</a>
+      <a href="#map" data-page="map">Suitability Map</a>
+      <a href="#sources" data-page="sources">Sources & Credits</a>
+    </div>
+  </nav>
 
-  <div class="slider-container">
-    <label for="opacitySlider">Map Intensity (Opacity)</label>
-    <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.75">
-  </div>
-</div>
+  <!-- ── Content ─────────────────────────────────────────────── -->
+  <main id="app"></main>
 
-<div id="status">Loading suitability data…</div>
-<div id="map"></div>
+  <!-- ── Libraries ───────────────────────────────────────────── -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- Geocoder Plugin JS -->
-<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
-<script>
-  const API_URL = "http://localhost:8000/api/suitability";
-  const AOI_CENTER = [14.68, 77.60];
-  const AOI_ZOOM = 12;
-
-  const map = L.map("map").setView(AOI_CENTER, AOI_ZOOM);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "© OpenStreetMap contributors"
-  }).addTo(map);
-
-  // 1. CREATE THE HAZY PANE
-  map.createPane('hazyHeatmap');
-  map.getPane('hazyHeatmap').style.opacity = 0.75;
-  map.getPane('hazyHeatmap').style.filter = 'blur(12px)'; // This creates the hazy blending effect!
-
-  // 2. ADD THE SEARCH BAR
-  L.Control.geocoder({
-    defaultMarkGeocode: true,
-    position: 'topright'
-  }).addTo(map);
-
-  // Link the slider to the pane's opacity
-  document.getElementById('opacitySlider').addEventListener('input', function(e) {
-    map.getPane('hazyHeatmap').style.opacity = e.target.value;
-  });
-
-  function suitabilityColor(prob) {
-    const low = [201, 164, 104];
-    const high = [27, 110, 140];
-    const rgb = low.map((c, i) => Math.round(c + (high[i] - c) * prob));
-    return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
-  }
-
-  async function loadSuitability() {
-    const statusEl = document.getElementById("status");
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error(`API returned ${res.status}`);
-      const geojson = await res.json();
-
-      geojson.features.forEach((feature) => {
-        const [lng, lat] = feature.geometry.coordinates;
-        const prob = feature.properties.suitability_probability;
-
-        // Calculate seamless bounds
-        const halfWidth = 0.0087; 
-        const bounds = [
-          [lat - halfWidth, lng - halfWidth],
-          [lat + halfWidth, lng + halfWidth]
-        ];
-
-        // 3. ASSIGN SQUARES TO THE HAZY PANE
-        const square = L.rectangle(bounds, {
-          fillColor: suitabilityColor(prob),
-          fillOpacity: 1, // Pane handles overall opacity now
-          stroke: false,
-          pane: 'hazyHeatmap' // Links to the blurred layer
-        }).addTo(map);
-
-        square.bindPopup(`<div style="font-size:13px;">Suitability: <b>${(prob * 100).toFixed(1)}%</b></div>`);
-      });
-
-      statusEl.textContent = `${geojson.features.length} cells loaded`;
-    } catch (err) {
-      statusEl.textContent = "Failed to load suitability data — is the backend running?";
-      console.error(err);
-    }
-  }
-
-  loadSuitability();
-</script>
-
+  <!-- App JS -->
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/pipeline.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

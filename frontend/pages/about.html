@@ -1,0 +1,221 @@
+<!-- ── About / Landing Page ─────────────────────────────────── -->
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      Machine Learning × Remote Sensing
+    </div>
+    <h1>
+      <span class="gradient-text">Water Infrastructure</span><br>
+      Siting for Employment
+    </h1>
+    <p class="subtitle">
+      A data-driven ML pipeline that combines satellite imagery, geospatial analysis,
+      and a ResNet18&nbsp;+&nbsp;XGBoost hybrid model to identify optimal groundwater
+      well sites in Anantapur, Andhra Pradesh.
+    </p>
+    <div class="hero-actions">
+      <a href="#map" class="btn btn-primary">
+        🗺️ View Suitability Map
+      </a>
+      <a href="#pipeline" class="btn btn-secondary">
+        ⚙️ Explore Pipeline
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="container">
+  <div class="stats-grid">
+    <div class="glass-card stat-card reveal">
+      <div class="stat-icon" style="background: rgba(56,189,248,0.12);">🛰️</div>
+      <div class="stat-value" data-count="6" data-suffix="">0</div>
+      <div class="stat-label">Spectral Bands</div>
+    </div>
+    <div class="glass-card stat-card reveal">
+      <div class="stat-icon" style="background: rgba(99,102,241,0.12);">📍</div>
+      <div class="stat-value" data-count="1112" data-suffix="">0</div>
+      <div class="stat-label">Labeled Points</div>
+    </div>
+    <div class="glass-card stat-card reveal">
+      <div class="stat-icon" style="background: rgba(34,197,94,0.12);">🗺️</div>
+      <div class="stat-value" data-count="484" data-suffix="">0</div>
+      <div class="stat-label">Grid Cells</div>
+    </div>
+    <div class="glass-card stat-card reveal">
+      <div class="stat-icon" style="background: rgba(245,158,11,0.12);">🏗️</div>
+      <div class="stat-value" data-count="65" data-suffix="×65">0</div>
+      <div class="stat-label">Patch Size (px)</div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem Statement -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="overline">The Problem</span>
+      <h2>India's Groundwater Crisis</h2>
+      <p>A crisis affecting 600 million people that demands data-driven intervention</p>
+    </div>
+
+    <div class="crisis-callout reveal">
+      <h3>⚠️ Why This Matters</h3>
+      <p>
+        India is the <span class="highlight">world's largest consumer of groundwater</span>,
+        with 85% of rural drinking water and over 60% of agriculture depending entirely on it.
+        According to NITI Aayog, nearly <span class="highlight">600 million people</span> face
+        high-to-extreme water stress. National water demand is projected to be
+        <span class="highlight">twice the available supply by 2030</span>.
+      </p>
+      <br>
+      <p>
+        MGNREGA, one of the world's largest public employment programs, allocates substantial
+        resources for building water conservation structures — but studies show that
+        <span class="highlight">62% of flood protection works</span> suffer partial damage,
+        and up to <span class="highlight">76% of drought-proofing assets</span> are fully damaged.
+        The problem isn't budget or will — it's <span class="highlight">intelligent siting and planning</span>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Two-Model Framework -->
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="overline">Our Approach</span>
+      <h2>Decoupled Two-Model Framework</h2>
+      <p>Separating social vulnerability identification from hydrological siting</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="glass-card feature-card reveal">
+        <div class="card-icon" style="background: rgba(245,158,11,0.12);">
+          🏘️
+        </div>
+        <h3>Model 1 — Priority Map</h3>
+        <p>
+          A social vulnerability model that uses CNNs to analyse multi-spectral satellite
+          imagery (nighttime lights, land use, settlement patterns) and predict high-resolution
+          poverty and water-need indices. Bridges the critical data gap left by the outdated
+          2011 Census by training on (2011 Satellite + Terrain → 2011 Census) and then
+          predicting on current imagery.
+        </p>
+      </div>
+      <div class="glass-card feature-card reveal">
+        <div class="card-icon" style="background: rgba(56,189,248,0.12);">
+          💧
+        </div>
+        <h3>Model 2 — Siting Model</h3>
+        <p>
+          A hybrid learning architecture for hydrological siting. Uses a CNN (ResNet18)
+          for deep feature extraction from 6-band geospatial data, producing 512-dimensional
+          embeddings that capture complex spatial patterns. These are combined with tabular
+          features and fed into XGBoost for robust binary classification of site suitability.
+        </p>
+        <br>
+        <span class="corestack-badge">🌐 CoRE Stack Aligned</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CoRE Stack Alignment -->
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="overline">Data Platform</span>
+      <h2>CoRE Stack Integration</h2>
+      <p>Leveraging India's geospatial data platform for comprehensive analysis</p>
+    </div>
+
+    <div class="glass-card reveal" style="padding: 36px;">
+      <p style="color: var(--text-secondary); line-height: 1.8; font-size: 15px;">
+        <a href="https://core-stack.org/" target="_blank" style="font-weight: 600;">CoRE Stack</a>
+        (Computing Resource for Earth) provides the geospatial layers and datasets that power
+        this pipeline. The siting model draws upon hydrological layers including net water
+        balance, aquifer type, and groundwater extraction stages; climate indicators such as
+        drought intensity and frequency; land use and land cover classification; and terrain
+        classification data. These layers ensure that the model's predictions are grounded
+        in real, physically meaningful environmental data rather than arbitrary proxies.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;">
+        <span class="corestack-badge">Hydrological Layers</span>
+        <span class="corestack-badge">Climate Indicators</span>
+        <span class="corestack-badge">Land Use / Land Cover</span>
+        <span class="corestack-badge">Terrain Classification</span>
+        <span class="corestack-badge">Socio-Economic Variables</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Band Overview -->
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="overline">Input Data</span>
+      <h2>6-Band Satellite Composite</h2>
+      <p>Each band captures a distinct, physically meaningful environmental signal</p>
+    </div>
+
+    <div class="glass-card reveal">
+      <table class="band-table">
+        <thead>
+          <tr>
+            <th>Band</th>
+            <th>Feature</th>
+            <th>Source</th>
+            <th>Resolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="band-name">Band 1</td>
+            <td>Slope (degrees)</td>
+            <td>SRTM 30m DEM</td>
+            <td>30 m</td>
+          </tr>
+          <tr>
+            <td class="band-name">Band 2</td>
+            <td>TWI (Topographic Wetness Index)</td>
+            <td>SRTM + MERIT Hydro</td>
+            <td>30 m</td>
+          </tr>
+          <tr>
+            <td class="band-name">Band 3</td>
+            <td>Distance to Nearest Stream</td>
+            <td>MERIT Hydro</td>
+            <td>30 m</td>
+          </tr>
+          <tr>
+            <td class="band-name">Band 4</td>
+            <td>Land Use / Land Cover</td>
+            <td>ESA WorldCover v200</td>
+            <td>10 m → 30 m</td>
+          </tr>
+          <tr>
+            <td class="band-name">Band 5</td>
+            <td>Mean Annual Rainfall</td>
+            <td>CHIRPS (2020–2025)</td>
+            <td>~5.5 km → 30 m</td>
+          </tr>
+          <tr>
+            <td class="band-name">Band 6</td>
+            <td>NDVI (Vegetation Index)</td>
+            <td>Sentinel-2 SR median</td>
+            <td>10 m</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <p>Project WISE — BITS Pilani, Hyderabad Campus</p>
+</div>
